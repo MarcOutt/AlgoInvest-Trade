@@ -8,22 +8,28 @@ def comb_list(list_name):
 
 
 def bruteforce(lst):
-    best_wallet = ""
+    start = time.time()
+    best_wallet = []
     best_amount_wallet = 0
     best_benefits = 0
     for solution in comb_list(lst):
-        wallet = ""
+        wallet = []
         benefits_wallet = 0
         amount_wallet = 0
         for stock_market in solution:
             amount_wallet += stock_market[1]
             benefits_wallet += stock_market[2] * stock_market[1]
-            wallet += f"{stock_market[0]}, "
+            wallet.append(stock_market[0])
         if amount_wallet <= 500 and best_benefits < benefits_wallet:
             best_wallet = wallet
             best_amount_wallet = amount_wallet
             best_benefits = benefits_wallet
-    return best_wallet, best_amount_wallet, best_benefits
+    end = time.time()
+    print("_" * 70, f"\nLe portefeuille d'actions le plus rentable est le suivant:")
+    for share in best_wallet:
+        print("-", share)
+    print(f"\nLa valeur du portefeuille est de {best_amount_wallet}€ avec un bénéfice de {round(best_benefits, 2)}€"
+          f"\nLe temps d'exécution du programme est de : {round((end - start), 2)}s\n")
 
 
 stock_market = [
@@ -49,11 +55,6 @@ stock_market = [
         ["action_20", 114, 0.18],
     ]
 
-start = time.time()
-wallet_stock_market, amount_wallet, benefits = bruteforce(stock_market)
-end = time.time()
-print(f"Le portefeuille d'actions le plus rentable est le suivant: \n{wallet_stock_market}\nd'une valeur de "
-      f"{amount_wallet}€ et avec un bénéfice de {benefits}€")
+bruteforce(stock_market)
 
-print("\nLe temps d'execution du programme est de :",
-      (end-start) * 10**3, "ms")
+

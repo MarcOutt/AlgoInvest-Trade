@@ -1,4 +1,58 @@
 import time
+import csv
+
+
+def read_csv_files(file):
+    with open(file, 'r') as f:
+        dataset = csv.reader(f)
+        dataset_clean = clean_file(dataset)
+    return dataset_clean
+
+
+def clean_file(file):
+    dataset = []
+    for share in file:
+        if share[1] == "0.0" or share[1].startswith('-') or share[1].startswith('price'):
+            del share
+        else:
+            share[1] = float(share[1])
+            share[2] = float(share[2])/100
+            dataset.append(share)
+    return dataset
+
+
+def dynamic(amount_max, stocks):
+    start = time.time()
+    amount_max = amount_max*100
+    matrice = [[0 for x in range(amount_max + 1)] for x in range(len(stocks) + 1)]
+    for i in range(1, len(stocks) + 1):
+        stocks[i - 1][1] = int(stocks[i - 1][1] * 100)
+        stocks[i - 1][2] = stocks[i - 1][2] * 100
+        stocks[i - 1].append(stocks[i - 1][1] * stocks[i - 1][2])
+        for amount_max in range(1, amount_max + 1):
+            if stocks[i - 1][1] <= amount_max:
+                matrice[i][amount_max] = max(stocks[i - 1][3] + matrice[i - 1][amount_max - stocks[i - 1][1]],
+                                         matrice[i - 1][amount_max])
+            else:
+                matrice[i][amount_max] = matrice[i-1][amount_max]
+
+    n = len(stocks)
+    stocks_selection = []
+    amount_wallet = 0
+    while amount_max >= 0 and n >= 0:
+        stock = stocks[n - 1]
+        if matrice[n][amount_max] == matrice[n-1][amount_max-stock[1]] + stock[3]:
+            stocks_selection.append(stock[0])
+            amount_wallet += stock[1]
+            amount_max -= stock[1]
+        n -= 1
+    amount_wallet = amount_wallet / 100
+    benefits = matrice[-1][-1] / 10000
+    end = time.time()
+    print("_" * 70, f"\nLe portefeuille d'actions le plus rentable est le suivant: {amount_wallet}€"
+                    f"\nLa valeur du portefeuille est de {amount_wallet}€ avec un bénéfice de {round(benefits,2)}€"
+                    f"\nLe temps d'exécution du programme est de : {round((end - start), 2)}s\n")
+
 
 stocks_market = [
         ["action_01", 20, 0.05],
@@ -23,39 +77,13 @@ stocks_market = [
         ["action_20", 114, 0.18],
     ]
 
+dataset1 = read_csv_files("dataset1.csv")
+dataset2 = read_csv_files("dataset2.csv")
 
-def dynamic(amount_max, stocks):
-    matrice = [[0 for x in range(amount_max + 1)] for x in range(len(stocks) + 1)]
-
-    for i in range(1, len(stocks) + 1):
-        stocks[i - 1].append(stocks[i - 1][1] * stocks[i - 1][2])
-        for amount in range(1, amount_max + 1):
-            if stocks[i - 1][1] <= amount:
-                matrice[i][amount] = max(stocks[i - 1][3] + matrice[i - 1][amount - stocks[i - 1][1]], matrice[i - 1][amount])
-            else:
-                matrice[i][amount] = matrice[i-1][amount]
-
-    amount = amount_max
-    n = len(stocks)
-    stocks_selection = []
-    amount_wallet = 0
-    while amount >= 0 and n >= 0:
-        stock = stocks[n - 1]
-        if matrice[n][amount] == matrice[n-1][amount-stock[1]] + stock[3]:
-            stocks_selection.append(stock[0])
-            amount_wallet += stock[1]
-            amount -= stock[1]
-        n -= 1
-    return stocks_selection, amount_wallet, matrice[-1][-1]
+dynamic(500, stocks_market)
+dynamic(500, dataset1)
+dynamic(500, dataset2)
 
 
-start = time.time()
-wallet, amount_wallet, benefits = dynamic(500, stocks_market)
-end = time.time()
 
 
-print(f"Le portefeuille d'actions le plus rentable est le suivant: \n{wallet}\nd'une valeur de "
-      f"{amount_wallet}€ et avec un bénéfice de {benefits}€")
-
-print("\nLe temps d'execution du programme est de :",
-      (end-start) * 10**3, "ms")
