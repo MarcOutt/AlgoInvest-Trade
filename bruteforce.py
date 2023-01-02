@@ -1,18 +1,38 @@
 from itertools import chain, combinations
 import time
+import csv
+
+def read_csv_files(file):
+    """Lit un fichier csv"""
+    with open(file, 'r') as f:
+        dataset = csv.reader(f)
+        dataset_clean = clean_file(dataset)
+    return dataset_clean
 
 
-def comb_list(list_name):
-    s = list(list_name)
-    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+def clean_file(file):
+    """Nettoie les fichiers CSV"""
+    dataset = []
+    for share in file:
+        if share[1] == "0.0" or share[1].startswith('-') or share[1].startswith('price'):
+            del share
+        else:
+            share[1] = float(share[1])
+            share[2] = float(share[2]) / 100
+            dataset.append(share)
+    return dataset
 
 
 def bruteforce(lst):
+    """Permet de sélectionner des actions pour créer un portefeuille avec un bénéfice optimisé avec un algorithme
+    de type bruteforce"""
     start = time.time()
     best_wallet = []
     best_amount_wallet = 0
     best_benefits = 0
-    for solution in comb_list(lst):
+    s = list(lst)
+    comb_list = chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
+    for solution in comb_list:
         wallet = []
         benefits_wallet = 0
         amount_wallet = 0
@@ -28,7 +48,7 @@ def bruteforce(lst):
     print("_" * 70, f"\nLe portefeuille d'actions le plus rentable est le suivant:")
     for share in best_wallet:
         print("-", share)
-    print(f"\nLa valeur du portefeuille est de {best_amount_wallet}€ avec un bénéfice de {round(best_benefits, 2)}€"
+    print(f"\nLa valeur du portefeuille est de {round(best_amount_wallet, 2)}€ avec un bénéfice de {round(best_benefits, 2)}€"
           f"\nLe temps d'exécution du programme est de : {round((end - start), 2)}s\n")
 
 
@@ -55,6 +75,13 @@ stock_market = [
         ["action_20", 114, 0.18],
     ]
 
-bruteforce(stock_market)
 
+print(" "*25, "ALGORITHME BRUTEFORCE")
+
+
+dataset1 = read_csv_files("dataset1.csv")
+dataset2 = read_csv_files("dataset2.csv")
+
+bruteforce(stock_market)
+bruteforce(dataset1)
 
