@@ -73,4 +73,3 @@ Dans cette partie, nous avons testé l'exactitude de l'algorithme en l'exécutan
     ```
    python backtesting.py
 ```
-
