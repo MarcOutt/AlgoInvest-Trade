@@ -1,4 +1,4 @@
-[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+
 # Projet d'Optimisation des Stratégies d'Investissement
 
 ## Sommaire
