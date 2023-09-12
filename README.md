@@ -70,6 +70,6 @@ Dans cette partie, nous avons testé l'exactitude de l'algorithme en l'exécutan
    python optimized.py
 ```
 4. Pour exécuter l'algorithme de la partie 3 (backtesting), tapez la commande suivante :
-    ```
+```
    python backtesting.py
-   ```
+```
