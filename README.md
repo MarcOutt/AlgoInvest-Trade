@@ -32,7 +32,7 @@ Avant d'exécuter le code, assurez-vous d'avoir les éléments suivants install�
 
 ### 1. Télécharger le projet sur votre répertoire local : 
 ```
-git clone https://github.com/MarcOutt/OC_p12.git
+git clone https://github.com/MarcOutt/AlgoInvest-Trade.git
 ```
 ### 2. Mettre en place un environnement virtuel :
 * Créer l'environnement virtuel: `python -m venv venv`
